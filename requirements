@@ -1,0 +1,6 @@
+elasticsearch
+Flask
+Flask-Scripts
+numpy
+transformers
+torch

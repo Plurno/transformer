@@ -1,9 +1,11 @@
 from flask import Flask
 from app.config import config
-from app.models import Reader
 
-from elasticsearch import Elasticsearch
-
+from haystack import Finder
+from haystack.document_store.elasticsearch import ElasticsearchDocumentStore
+from haystack.retriever.sparse import ElasticsearchRetriever
+from haystack.reader.farm import FARMReader
+from haystack.utils import print_answers
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -12,9 +14,12 @@ def create_app(config_name):
     port = config[config_name].ELASTIC_PORT
     index = config[config_name].ELASTIC_INDEX
 
-    es_client = Elasticsearch(hosts=[{"host": host, "port": port}])
+    doc_store = ElasticsearchDocumentStore(host=host, username='', password='', index=index)
 
-    app.reader = Reader(es_client, index)
+    retriever = ElasticsearchRetriever(document_store=doc_store)
+    model_name = "deepset/roberta-base-squad2"
+    reader = FARMReader(model_name_or_path=model_name, num_processes=0, use_gpu=False)
+    app.finder = Finder(reader, retriever)
 
     from app.main import main as main_blueprint
     app.register_blueprint(main_blueprint)

@@ -44,10 +44,10 @@ for question in questions:
     print(f"Answer: {answer}")
 
 
-Creating the trace
-model.eval()
-traced_model = torch.jit.trace(model, longest)
-torch.jit.save(traced_model, "traced_roberta.pt")
+# Creating the trace
+# model.eval()
+# traced_model = torch.jit.trace(model, longest)
+# torch.jit.save(traced_model, "traced_roberta.pt")
 
 # from transformers import pipeline
 # nlp = pipeline(model=model, tokenizer=tokenizer)
